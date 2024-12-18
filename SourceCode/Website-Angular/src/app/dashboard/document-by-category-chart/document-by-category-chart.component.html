@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col">
+    <div class="card">
+      <div class="header">
+        <div class="col-md-6 mb-2">
+          <span class="mb-0 page-title">{{
+            "DOCUMENTS_BY_CATEGORY" | translate
+            }}</span>
+          <app-page-help-text [code]="'DOCUMENTS_BY_CATEGORY'"></app-page-help-text>
+        </div>
+      </div>
+      <div class="body">
+        <div echarts [loading]="isLoading" [options]="pieChartOptions" class="chart-container"></div>
+      </div>
+    </div>
+  </div>
+</div>

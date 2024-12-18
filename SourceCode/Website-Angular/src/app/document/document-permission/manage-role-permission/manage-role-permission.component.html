@@ -1,0 +1,83 @@
+<div class="d-flex">
+  <h2 mat-dialog-title class="dialog-title">{{'ROLE_PERMISSION' | translate}}</h2>
+  <button mat-icon-button class="ms-auto" (click)="onNoClick()">
+    <mat-icon class="close-icon" color="warn">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="permissionForm">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <mat-label>{{'ROLES' | translate}}</mat-label>
+        <mat-select class="form-control" [(value)]="selectedRoles" multiple>
+          <mat-select-trigger>
+            <span *ngIf="selectedRoles.length > 0">
+              {{selectedRoles[0].name}}
+            </span>
+            <span *ngIf="selectedRoles.length > 1" class="example-additional-selection">
+              (+{{selectedRoles.length - 1}} {{selectedRoles.length === 2 ? 'other' : 'others'}})
+            </span>
+          </mat-select-trigger>
+          <mat-option *ngFor="let role of data.roles" [value]="role">
+            {{role.name}}
+          </mat-option>
+        </mat-select>
+      </div>
+    </div>
+    <div class="row">
+      <mat-checkbox (change)="timeBoundChange($event)" color="primary" formControlName="isTimeBound">
+        {{'SPACIFY_THE_PERIOD' | translate}}</mat-checkbox>
+    </div>
+    <div class="row" *ngIf="permissionForm.get('isTimeBound').value">
+      <div class="form-group col-md-6">
+        <mat-label>{{'CHOOSE_A_START_DATE' | translate}}</mat-label>
+        <div class="input-group">
+          <input formControlName="startDate" class="form-control" [min]="minDate" [matDatepicker]="startDatePicker">
+          <div class="input-group-append">
+            <button class="btn btn-primary calendar-button" type="button" (click)="startDatePicker.open()">
+              <i-feather name="calendar" class="small-icon"></i-feather></button>
+          </div>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </div>
+        <mat-error *ngIf="permissionForm.get('startDate').touched && permissionForm.get('startDate').errors?.required">
+          {{'START_DATE_IS_REQURED' | translate}}
+        </mat-error>
+      </div>
+      <div class="form-group col-md-6">
+        <mat-label>{{'CHOOSE_A_END_DATE' | translate}}</mat-label>
+        <div class="input-group">
+          <input formControlName="endDate" class="form-control" [min]="permissionForm.get('startDate').value"
+            [matDatepicker]="endDatePicker">
+          <div class="input-group-append">
+            <button class="btn btn-primary calendar-button" type="button" (click)="endDatePicker.open()">
+              <i-feather name="calendar" class="small-icon"></i-feather></button>
+          </div>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </div>
+        <mat-error *ngIf="permissionForm.get('startDate').touched && permissionForm.get('endDate').errors?.required">
+          {{'END_DATE_IS_REQURED' | translate}}
+        </mat-error>
+      </div>
+    </div>
+    <div class="row">
+      <mat-checkbox color="primary" formControlName="isAllowDownload">{{'ALLOW_DOWNLOAD' | translate}}</mat-checkbox>
+    </div>
+    <div class="col-md-12">
+      <mat-checkbox color="primary" formControlName="isAllowEmailNotification">{{'IS_ALLOW_NOTIFICATION' |
+        translate}}</mat-checkbox>
+    </div>
+    <div *ngIf="permissionForm.get('isAllowEmailNotification').value && !smtpConfigured" class="alert alert-warning mt-2">
+      {{ 'PLEASE_CONFIGURE_EMAIL_SMTP_SETTINGS' | translate }}
+    </div>
+    <div class="col-md-12">
+      <button class="btn btn-success btn-sm me-2" (click)="saveDocumentRolePermission()" cdkFocusInitial>
+        <i-feather name="save" class="small-icon"></i-feather>
+        {{'SAVE' | translate}}
+      </button>
+      <button class="btn btn-danger btn-sm" (click)="onNoClick()">
+        <i-feather name="x-circle" class="small-icon"></i-feather>
+        {{'CANCEL' | translate}}
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

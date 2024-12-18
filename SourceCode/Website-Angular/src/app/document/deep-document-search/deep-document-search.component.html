@@ -1,0 +1,212 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <!-- Left-hand side: Title -->
+      <div class="col-md-6 mb-2">
+        <span class="mb-0 page-title">{{ "DEEP_SEARCH" | translate }}</span>
+        <app-page-help-text [code]="'DEEP_SEARCH'"></app-page-help-text>
+      </div>
+      <!-- Right-hand side: Buttons -->
+      <div class="col-md-6 d-flex justify-content-end mb-2">
+      </div>
+    </div>
+    <div class="card">
+      <div class="header">
+        <div class="d-flex flex-wrap flex-column flex-sm-row">
+          <div class="flex-fill">
+            <form name="form" novalidate>
+              <div class="input-group">
+                <input name="searchText" class="form-control" [(ngModel)]="searchQuery" id="txtSearch" placeholder="{{
+                                            'DEEP_SEARCH_TEXTBOX_PLACEHOLDER' | translate
+                                          }}" type="text" #input />
+                <button class="btn btn-primary" (click)="searchDocuments()" type="submit" id="txtSearch">
+                  <mat-icon class="pt-2">search</mat-icon>
+                  {{ "SEARCH" | translate }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap flex-column flex-sm-row">
+          <div class="p-1">
+            <mat-checkbox color="primary" [(ngModel)]="isExactMatch">
+              <b> {{'ISEXACTMATCH' | translate}}</b>
+            </mat-checkbox>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap flex-column flex-sm-row d-none d-sm-block">
+          <div class="flex-fill">
+
+            <span class="text-danger">
+              <b>{{ "NOTE" | translate }}:</b> {{ "DEEP_SEARCH_NOTE" | translate }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="table-responsive">
+          <div class="grid-height-small">
+            <table mat-table [dataSource]="dataSource" class="w-100">
+              <ng-container matColumnDef="select">
+                <th class="table-column-fix-30" mat-header-cell *matHeaderCellDef>
+                  <ng-container *ngIf="selection.isEmpty()">
+                    <mat-checkbox (change)="$event ? masterToggle() : null" color="primary"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                  </ng-container>
+                  <ng-container *ngIf="!selection.isEmpty()">
+                    <button mat-mini-fab class="btn btn-primary btn-sm" matTooltipPosition="above"
+                      matTooltip="{{ 'CLICK_HERE_TO_SHARED_SELECT_DOCUMENTS' | translate }}"
+                      (click)="onSharedSelectDocument()" *hasClaim="'all_documents_share_document'"
+                      aria-label="{{ 'SHARE' | translate }}">
+                      <mat-icon>share</mat-icon>
+                    </button>
+                  </ng-container>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox (click)="$event.stopPropagation()" color="primary"
+                    (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <th class="table-column-fix-30" mat-header-cell *matHeaderCellDef>
+                  {{ "ACTION" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Action">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button *hasClaim="'all_documents_edit_document'" mat-menu-item class="btn btn-light btn-sm"
+                      (click)="removeDocumentPageIndexing(document)">
+                      <mat-icon>delete</mat-icon>
+                      {{ "REMOVE_PAGE_INDEXING" | translate }}
+                    </button>
+                    <button *hasClaim="'all_documents_edit_document'" mat-menu-item class="btn btn-light btn-sm"
+                      (click)="editDocument(document)">
+                      <mat-icon>edit</mat-icon>
+                      {{ "EDIT" | translate }}
+                    </button>
+                    <button *hasClaim="'all_documents_share_document'" mat-menu-item class="btn btn-light btn-sm"
+                      (click)="manageDocumentPermission(document)" type="button">
+                      <mat-icon>share</mat-icon>
+                      {{ "SHARE" | translate }}
+                    </button>
+                    <button *hasClaim="'all_documents_create_shareable_link'" mat-menu-item class="btn btn-light btn-sm"
+                      (click)="onCreateShareableLink(document)" type="button">
+                      <mat-icon>link</mat-icon>
+                      {{ "GET_SHAREABLE_LINK" | translate }}
+                    </button>
+                    <button class="btn btn-light btn-sm" mat-menu-item (click)="onDocumentView(document)" type="button">
+                      <mat-icon>visibility</mat-icon>
+                      {{ "VIEW" | translate }}
+                    </button>
+                    <button class="btn btn-light btn-sm" *hasClaim="'all_documents_download_document'" mat-menu-item
+                      (click)="downloadDocument(document)" type="button">
+                      <mat-icon>download</mat-icon>
+                      {{ "DOWNLOAD" | translate }}
+                    </button>
+                    <button mat-menu-item class="btn btn-light btn-sm" *hasClaim="'all_documents_upload_new_version'"
+                      (click)="uploadNewVersion(document)" type="button">
+                      <mat-icon>upload</mat-icon>
+                      {{ "UPLOAD_NEW_VERSION_FILE" | translate }}
+                    </button>
+                    <button class="btn btn-light btn-sm" mat-menu-item *hasClaim="'all_documents_view_version_history'"
+                      (click)="onVersionHistoryClick(document)">
+                      <mat-icon> history</mat-icon>
+                      {{ "VERSION_HISOTRY" | translate }}
+                    </button>
+                    <button class="btn btn-light btn-sm" *hasClaim="'all_documents_add_comment'" mat-menu-item
+                      (click)="addComment(document)" type="button">
+                      <mat-icon> chat</mat-icon>
+                      {{ "COMMENT" | translate }}
+                    </button>
+                    <button class="btn btn-light btn-sm" *hasClaim="'all_documents_add_reminder'" mat-menu-item
+                      (click)="addReminder(document)" type="button">
+                      <mat-icon>notifications</mat-icon>
+                      {{ "ADD_REMINDER" | translate }}
+                    </button>
+                    <button class="btn btn-light btn-sm" *hasClaim="'all_documents_send_email'" mat-menu-item
+                      (click)="sendEmail(document)" type="button">
+                      <mat-icon>forward_to_inbox</mat-icon>
+                      {{ "SEND_EMAIL" | translate }}
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "NAME" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document">
+                  <a class="doc-link" (click)="onDocumentView(document)">{{
+                    document.name
+                    }}</a>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="categoryName">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "DOCUMENT_CATEGORY" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document">
+                  {{ document.categoryName }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="documentStatus">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "DOCUMENT_STATUS" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document" [ngStyle]="{ color: document.documentStatus?.colorCode }">
+                  {{ document.documentStatus?.name }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="storageType">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "STORAGE" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document">
+                  {{
+                  document.storageType
+                  | storageType : document.storageSettingName
+                  }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="createdDate">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "CREATED_DATE" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document">
+                  {{ document?.createdDate | utcToLocalTime:'shortDate' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="createdBy">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "CREATED_BY" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let document">
+                  {{ document?.createdBy }}
+                </td>
+              </ng-container>
+              <tr *matNoDataRow>
+                <td colspan="8">
+                  <div class="m-2">
+                    <b> {{ "NO_DATA_FOUND" | translate }}</b>
+                  </div>
+                </td>
+              </tr>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="spinner-container" *ngIf="isLoadingResults">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

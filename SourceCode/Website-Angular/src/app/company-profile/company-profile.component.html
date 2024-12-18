@@ -1,0 +1,166 @@
+<section class="content">
+  <div class="container-fluid">
+    <form [formGroup]="companyProfileForm">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-2">
+          <span class="mb-0 page-title">{{ "COMPANY_PROFILE" | translate }}<app-page-help-text code="COMPANY_PROFILE"></app-page-help-text> </span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="header">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="companyTitle">{{ 'COMPANY_TITLE' | translate}}</label>
+                  <input
+                    type="text"
+                    id="companyTitle"
+                    formControlName="companyTitle"
+                    class="form-control"
+                    placeholder="Enter company title"
+                  />
+                  <div
+                    *ngIf="
+                      companyProfileForm.get('companyTitle')?.touched &&
+                      companyProfileForm.get('companyTitle')?.invalid
+                    "
+                    class="text-danger"
+                  >
+                    <div
+                      *ngIf="
+                        companyProfileForm.get('companyTitle')?.errors?.required
+                      "
+                    >
+                      {{ 'COMPANY_TITLE_IS_REQUIRED' | translate }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="logoUpload"> {{ 'COMPANY_LOGO' | translate }}</label>
+                  <mat-card class="example-card" appearance="outlined">
+                    <img
+                      mat-card-image
+                      *ngIf="logoUrl"
+                      [src]="logoUrl"
+                      alt="Company Logo"
+                      width="200"
+                      height="55"
+                    />
+                    <mat-card-content>
+                      <div class="form-group">
+                        <input
+                          #logoUpload
+                          type="file"
+                          (change)="onLogoUpload($event)"
+                          accept="image/*"
+                          hidden
+                        />
+                        <button
+                        class="btn btn-success btn-sm me-2"
+                          color="primary"
+                          (click)="triggerLogoUpload(logoUpload)"
+                        >
+                        <i-feather name="image" class="small-icon"></i-feather>
+                          {{ 'CHANGE_LOGO' | translate }}
+                        </button>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <span class="font-weight-bold text-danger">
+                            {{'THE_LOGO_SIZE_NOTE' | translate}}
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="
+                          companyProfileForm.get('logo')?.touched &&
+                          companyProfileForm.get('logo')?.invalid
+                        "
+                        class="text-danger"
+                      >
+                        <div *ngIf="companyProfileForm.get('logo')?.errors?.required">
+                          {{ 'COMPANY_LOGO_IS_REQUIRED' | translate }}  
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="bannerUpload"> {{ 'COMPANY_BANNER' |  translate}}</label>
+                <mat-card class="example-card" appearance="outlined">
+                  <img
+                    mat-card-image
+                    *ngIf="bannerUrl"
+                    [src]="bannerUrl"
+                    alt="Company Banner"
+                    width="1000"
+                    height="500"
+                  />
+                  <mat-card-content>
+                    <div class="form-group">
+                      <input
+                        #bannerUpload
+                        type="file"
+                        (change)="onBannerUpload($event)"
+                        accept="image/*"
+                        hidden
+                      />
+                      <button
+                      class="btn btn-success btn-sm me-2"
+                        color="primary"
+                        (click)="triggerBannerUpload(bannerUpload)"
+                      >
+                      <i-feather name="image" class="small-icon"></i-feather>
+                        {{ 'CHANGE_BANNER' | translate }} 
+                      </button>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <span class="font-weight-bold text-danger">
+                          {{'THE_BANNER_SIZE_NOTE' | translate}}
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      *ngIf="
+                        companyProfileForm.get('banner')?.touched &&
+                        companyProfileForm.get('banner')?.invalid
+                      "
+                      class="text-danger"
+                    >
+                      <div *ngIf="companyProfileForm.get('banner')?.errors?.required">
+                        {{ 'COMPANY_BANNER_IS_REQUIRED' | translate }}
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+            <div class="m-top-10">
+              <button
+                class="btn btn-success btn-sm me-2"
+                [disabled]="companyProfileForm.invalid"
+                (click)="onSave()"
+              >
+              <i-feather name="save" class="small-icon"></i-feather> {{ "SAVE" | translate }}
+              </button>
+              <button
+                class="btn btn-danger btn-sm"
+                [routerLink]="['/dashboard']"
+              >
+              <i-feather name="x-circle" class="small-icon"></i-feather> {{ "CANCEL" | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

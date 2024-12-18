@@ -1,0 +1,38 @@
+<div>
+  <!-- Left Sidebar -->
+  <aside id="leftsidebar" class="sidebar" (mouseenter)="mouseHover()" (mouseleave)="mouseOut()">
+    <!-- Menu -->
+    <div class="menu">
+      <ng-scrollbar [style.height]="listMaxHeight + 'px'" visibility="hover">
+        <ul id="sidebarnav" class="list">
+          <!-- Top Most level menu -->
+          @for (sidebarItem of sidebarItems; track sidebarItem) {
+          <li [routerLinkActiveOptions]="{ exact: true }" *hasClaim="sidebarItem.hasClaims"
+            [routerLinkActive]="sidebarItem.submenu.length !== 0 ? 'active' : 'active-top'">
+            <a [routerLink]="sidebarItem.class === '' ? [sidebarItem.path] : null" [ngClass]="[sidebarItem.class]"
+              (click)="callToggleMenu($event, sidebarItem.submenu.length)" class="menu-top">
+              <i-feather [name]="sidebarItem.icon" class="sidebarIcon"></i-feather>
+              <span class="hide-menu">{{sidebarItem.title | translate}}
+              </span>
+            </a>
+            <!-- First level menu -->
+            @if (sidebarItem.submenu.length > 0) {
+            <ul class="ml-menu">
+              @for (sidebarSubItem1 of sidebarItem.submenu; track sidebarSubItem1) {
+              <li *hasClaim="sidebarSubItem1.hasClaims"
+                [routerLinkActive]="sidebarSubItem1.submenu.length > 0 ? '' : 'active'">
+                <a [routerLink]="sidebarSubItem1.submenu.length > 0 ? null : [sidebarSubItem1.path]"
+                  (click)="callToggleMenu($event,sidebarSubItem1.submenu.length)" [ngClass]="[sidebarSubItem1.class]">
+                  {{sidebarSubItem1.title | translate}}
+                </a>
+              </li>
+              }
+            </ul>
+            }
+          </li>
+          }
+        </ul>
+      </ng-scrollbar>
+    </div>
+  </aside>
+</div>

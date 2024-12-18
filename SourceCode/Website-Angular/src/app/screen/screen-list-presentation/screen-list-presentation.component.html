@@ -1,0 +1,46 @@
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-md-auto col-sm-auto">
+    <div class="section-title">
+      <h2>Pages</h2>
+    </div>
+  </div>
+  <div class="col-md-auto col-sm-auto">
+    <h4 class="widget-title">
+      <button class="btn btn-success btn-sm me-2" (click)="manageScreen({})">
+        <i-feather name="plus"></i-feather>
+        Add Page
+      </button>
+    </h4>
+  </div>
+</div>
+
+<div class="mat-elevation-z8">
+  <div class="table-container">
+    <table mat-table [dataSource]="screens" class="mat-elevation-z8 table">
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th style="width:30%" mat-header-cell *matHeaderCellDef>Action </th>
+        <td style="width:30%" mat-cell *matCellDef="let element">
+          <button (click)="manageScreen(element)" class="btn btn-success btn-sm me-2" type="button">
+            <i-feather name="edit" class="small-icon"></i-feather> Edit
+          </button>
+          <button (click)="deleteScreen(element)" class="btn btn-danger btn-sm" type="button">
+            <i-feather name="trash" class="small-icon"></i-feather> Delete
+          </button>
+        </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
+<div class="spinner-container" *ngIf="!loading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<div class="audio-div">
+    <audio #playerEl controls="controls"></audio>
+</div>
+<div class="spinner-container" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>

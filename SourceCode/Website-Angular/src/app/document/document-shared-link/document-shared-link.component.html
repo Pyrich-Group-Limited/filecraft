@@ -1,0 +1,126 @@
+<div class="d-flex">
+  <span mat-dialog-title class="dialog-title">{{ "SHAREABLE_LINK" | translate }}<app-page-help-text
+      [code]="'SHAREABLE_LINK'"></app-page-help-text></span>
+  <button mat-icon-button class="ms-auto" (click)="closeDialog()">
+    <i-feather class="close-icon" name="x"></i-feather>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="documentLinkForm" class="form-group">
+    <div *ngIf="isEditMode" class="mb-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-md col">
+          <label for="link" class="form-label">{{ "LINK_SHARING_IS_ON" | translate }}</label>
+        </div>
+        <div class="col-auto col-m-auto">
+          <button (click)="deleteDocumentLink()" mat-icon-button class="text-danger btn">
+            <i-feather name="trash"></i-feather>
+          </button>
+          <button mat-icon-button (click)="openLinkSettings()" class="text-success btn">
+            <i-feather name="settings"></i-feather>
+          </button>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-12 input-group">
+          <input formControlName="linkCode" type="text" id="link" class="form-control" />
+          <div matTooltip="Copy" [cdkCopyToClipboard]="documentLinkForm.get('linkCode').value"
+            class="input-group-append" role="button">
+            <button type="button" class="btn btn-success btn-sm">
+              <i-feather name="copy" class="small-icon"></i-feather> {{'COPY' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!isEditMode || isResetLink" class="mb-2">
+      <div>
+        <section>
+          <label for="isLinkExpiryTime" class="form-label">{{ "LINK_EXPIRATION" | translate}}</label>
+          <p>
+            <mat-checkbox color="primary" formControlName="isLinkExpiryTime"></mat-checkbox>
+            <label for="isLinkExpiryTime">{{ "IS_LINK_VALID_UNTIL" | translate}}</label>
+          </p>
+          <ng-container *ngIf="documentLinkForm.get('isLinkExpiryTime').value">
+            <!-- Date picker input -->
+            <div class="input-group mb-3">
+              <input class="form-control" matInput formControlName="linkExpiryDate"
+                placeholder="{{'MM_DD_YYYY' | translate}}" [matDatepicker]="linkExpiryDatePicker" [min]="minDate" />
+              <div class="input-group-append">
+                <button class="btn btn-primary calendar-button" type="button" (click)="linkExpiryDatePicker.open()">
+                  <i-feather name="calendar" class="small-icon"></i-feather>
+                </button>
+              </div>
+              <mat-datepicker #linkExpiryDatePicker></mat-datepicker>
+            </div>
+
+            <!-- Time picker input -->
+            <div class="input-group mb-3">
+              <input class="form-control timepicker-input" formControlName="linkExpiryTime" [format]="24"
+                placeholder="{{ 'EXPIRY_TIME' | translate }}" [ngxTimepicker]="timePicker" [disableClick]="true"
+                readonly />
+              <div class="input-group-append">
+                <button [for]="timePicker" class="btn btn-primary calendar-button" ngxMaterialTimepickerToggleIcon
+                  type="button" (click)="timePicker.open()">
+                  <i-feather name="clock" class="small-icon"></i-feather>
+                </button>
+              </div>
+              <ngx-material-timepicker #timePicker></ngx-material-timepicker>
+            </div>
+          </ng-container>
+          <div class="text-danger" *ngIf="
+              documentLinkForm.get('isLinkExpiryTime').touched &&
+              documentLinkForm.hasError('linkExpiryDateValidator')
+            ">
+            {{ "EXPIRY_DATE_AND_TIME_ARE_REQUIRED" | translate }}
+          </div>
+          <div *ngIf="
+              documentLinkForm.get('linkExpiryTime')?.hasError('required') &&
+              documentLinkForm.get('linkExpiryDate')?.touched
+            ">
+            <div class="text-danger" *ngIf="documentLinkForm.get('linkExpiryTime')?.errors?.required">
+              {{ "EXPIRY_TIME_ARE_REQUIRED" | translate }}
+            </div>
+          </div>
+        </section>
+        <hr />
+        <section>
+          <span> {{ "PASSWORD_PROTECTION" | translate }}</span>
+          <p>
+            <mat-checkbox color="primary" formControlName="isPassword"></mat-checkbox>
+            <label for="isPassword">{{ "IS_PASSWORD_REQUIRED" | translate}}</label>
+          </p>
+          <input *ngIf="documentLinkForm.get('isPassword').value" autocomplete="new-password" type="password"
+            class="form-control" formControlName="password" placeholder="{{ 'ENTER_PASSWORD' | translate }}" />
+          <div class="text-danger" *ngIf="
+              documentLinkForm.get('isPassword').touched &&
+              documentLinkForm.hasError('passwordValidator')
+            ">
+            {{ "PASSWORD_IS_REQUIRED" | translate }}
+          </div>
+        </section>
+        <hr />
+        <section>
+          <span> {{ "ALLOW_DOWNLOAD" | translate }}</span>
+          <p>
+            <mat-checkbox formControlName="isAllowDownload" color="primary"></mat-checkbox>
+            <label for="isAllowDownload">{{ "USERS_WITH_LINK_CAN_DOWNLOAD_THIS_ITEM" | translate}}</label>
+          </p>
+        </section>
+      </div>
+    </div>
+    <button type="submit" (click)="createLink()" *ngIf="!isEditMode" class="btn-sm btn btn-success">
+      <i-feather name="save" class="small-icon"></i-feather>
+      {{ "CREATE_LINK" | translate }}
+    </button>
+    <button type="submit" (click)="createLink()" *ngIf="isEditMode && isResetLink" class="btn-sm btn btn-success">
+      <i-feather name="save" class="small-icon"></i-feather>
+      {{ "UPDATE_LINK" | translate }}
+    </button>
+  </form>
+  <div class="spinner-container" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</mat-dialog-content>
